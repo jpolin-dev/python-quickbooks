@@ -1,7 +1,7 @@
 from .base import Ref, CustomField, QuickbooksManagedObject, LinkedTxnMixin, Address, \
     EmailAddress, QuickbooksTransactionEntity, LinkedTxn
 from .tax import TxnTaxDetail
-from .detailline import DetailLine
+from .detailline import DetailLine, SalesItemLine, SubtotalLine, DiscountLine, GroupLine, DescriptionOnlyLine
 from ..mixins import QuickbooksPdfDownloadable, DeleteMixin, VoidMixin
 
 
@@ -35,7 +35,11 @@ class SalesReceipt(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObje
     }
 
     detail_dict = {
-
+        "SalesItemLineDetail": SalesItemLine,
+        "SubTotalLineDetail": SubtotalLine,
+        "DiscountLineDetail": DiscountLine,
+        "DescriptionOnly": DescriptionOnlyLine,
+        "GroupLineDetail": GroupLine
     }
 
     qbo_object_name = "SalesReceipt"
@@ -78,3 +82,12 @@ class SalesReceipt(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObje
 
     def __str__(self):
         return str(self.TotalAmt)
+
+    def to_ref(self):
+        ref = Ref()
+
+        ref.name = self.DocNumber
+        ref.type = self.qbo_object_name
+        ref.value = self.Id
+
+        return ref
